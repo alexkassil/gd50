@@ -18,11 +18,11 @@ push = require 'push'
 	16:9 Aspect Ratio
 ]]
 
-WINDOW_HEIGHT = 540
-WINDOW_WIDTH = 960
+WINDOW_WIDTH = 1280
+WINDOW_HEIGHT = 720
 
-VIRTUAL_WIDTH = 324
-VIRTUAL_HEIGHT = 182
+VIRTUAL_WIDTH = 432
+VIRTUAL_HEIGHT = 243
 
 --[[
 	love.load always runs on startup
@@ -33,13 +33,13 @@ VIRTUAL_HEIGHT = 182
 
 function love.load()
 	-- use nearest-neighbor filtering to prevent blurring of text
-	love.graphics.setDefaulFilter('nearest', 'nearest')
+	love.graphics.setDefaultFilter('nearest', 'nearest')
 	
-    push:setupScreen(VITRUAL_WIDTH, VIRTUAL_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, {
-	    fullscreen = false,
-		resizable = false,
-		vsync = true
-	})
+    push:setupScreen(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, {
+        fullscreen = false,
+        resizable = false,
+        vsync = true
+    })
 end
 
 --[[
@@ -57,10 +57,16 @@ end
 ]]
 
 function love.draw()
+	push:apply('start')
+	
     love.graphics.printf(
 		'Hello Pong!',
 		0,
-		WINDOW_HEIGHT / 2 - 6, -- Shift by 6 since LOVE2D default font size is 12
-		WINDOW_WIDTH,
+		VIRTUAL_HEIGHT / 2 - 6, -- Shift by 6 since LOVE2D default font size is 12
+		VIRTUAL_WIDTH,
 		'center')
+
+	-- end rendering at virtual resolution
+	push:apply('end')
 end
+
