@@ -7,12 +7,22 @@
 ]]
 
 --[[
+	Get a library
+	push will turn our resolution retro
+	https://github.com/Ulydev/push
+]]
+push = require 'push'
+
+--[[
 	Global Variables to set window resolution
 	16:9 Aspect Ratio
 ]]
 
 WINDOW_HEIGHT = 540
 WINDOW_WIDTH = 960
+
+VIRTUAL_WIDTH = 324
+VIRTUAL_HEIGHT = 182
 
 --[[
 	love.load always runs on startup
@@ -22,11 +32,24 @@ WINDOW_WIDTH = 960
 ]]
 
 function love.load()
-    love.window.setMode(WINDOW_WIDTH, WINDOW_HEIGHT, {
+	-- use nearest-neighbor filtering to prevent blurring of text
+	love.graphics.setDefaulFilter('nearest', 'nearest')
+	
+    push:setupScreen(VITRUAL_WIDTH, VIRTUAL_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, {
 	    fullscreen = false,
 		resizable = false,
 		vsync = true
 	})
+end
+
+--[[
+	Keyboard handling, called by LOVE2D each frame
+]]
+
+function love.keypressed(key)
+	if key == 'escape' then
+		love.event.quit()
+	end
 end
 
 --[[
