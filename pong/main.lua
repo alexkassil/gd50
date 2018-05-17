@@ -37,7 +37,7 @@ function love.draw()
     love.graphics.printf(
 		'Hello Pong!',
 		0,
-		WINDOW_HEIGHT / 2 - 6,
+		WINDOW_HEIGHT / 2 - 6, -- Shift by 6 since LOVE2D default font size is 12
 		WINDOW_WIDTH,
 		'center')
 end
