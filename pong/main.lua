@@ -137,7 +137,7 @@ function love.keypressed(key)
 			ballY = VIRTUAL_HEIGHT / 2 - 2
 
 			ballDX = math.random(2) == 1 and 100 or -100
-			ballDY = math.random(-50, 50)
+			ballDY = math.random(-75, 75)
 		end
 	end
 end
@@ -148,9 +148,6 @@ end
 
 function love.draw()
 	push:apply('start')
-
-	-- clear the screen with a specific color
-	love.graphics.clear(40, 45, 52, 255)
 
 	-- welcome text
 	love.graphics.setFont(smallFont)
