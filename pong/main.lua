@@ -72,18 +72,22 @@ function love.update(dt)
 	if love.keyboard.isDown('w') then
 		-- add negative paddle speed to current Y scaled by deltaTime
 		player1Y = player1Y - PADDLE_SPEED * dt
+		player1Y = math.max(0, player1Y)
 	elseif love.keyboard.isDown('s') then
 		-- add positive paddle speed to current Y scaled by deltaTime
 		player1Y = player1Y + PADDLE_SPEED * dt
+		player1Y = math.min(VIRTUAL_HEIGHT - 20, player1Y)
 	end
 
 	-- player 2 movement
 	if love.keyboard.isDown('up') then
 		-- add negative paddle speed to current Y scaled by deltaTime
 		player2Y = player2Y - PADDLE_SPEED * dt
+		player2Y = math.max(0, player2Y)
 	elseif love.keyboard.isDown('down') then
 		-- add positive paddle speed to current Y scaled by deltaTime
 		player2Y = player2Y + PADDLE_SPEED * dt
+		player2Y = math.min(VIRTUAL_HEIGHT - 20, player2Y)
 	end
 end
 
@@ -108,7 +112,13 @@ function love.draw()
 	love.graphics.clear(40, 45, 52, 255)
 
 	-- welcome text
+	love.graphics.setFont(smallFont)
     love.graphics.printf('Hello Pong!', 0, 20, VIRTUAL_WIDTH, 'center')
+
+	-- score
+	love.graphics.setFont(scoreFont)
+	love.graphics.print(tostring(player1Score), VIRTUAL_WIDTH / 2 - 50, VIRTUAL_HEIGHT / 3)
+	love.graphics.print(tostring(player2Score), VIRTUAL_WIDTH / 2 + 30, VIRTUAL_HEIGHT / 3)
 
 	-- render left paddle
 	love.graphics.rectangle('fill', 10, player1Y, 5, 20)
