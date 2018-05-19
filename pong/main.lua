@@ -40,6 +40,9 @@ function love.load()
 	-- use nearest-neighbor filtering to prevent blurring of text
 	love.graphics.setDefaultFilter('nearest', 'nearest')
 
+	-- startup our RNG seeded with the time
+	math.randomseed(os.time())
+
 	-- more retro font object
 	smallFont = love.graphics.newFont('font.ttf', 8)
 
@@ -58,6 +61,15 @@ function love.load()
 
 	player1Y = 30
 	player2Y = VIRTUAL_HEIGHT - 50
+
+	ballX = VIRTUAL_WIDTH / 2 - 2
+	ballY = VIRTUAL_HEIGHT / 2 - 2
+
+	-- cool way to set either 100 or -100
+	ballDX = math.random(2) == 1 and 100 or -100
+	ballDY = math.random(-50, 50)
+
+	gameState = 'start'
 end
 
 --[[
@@ -68,6 +80,12 @@ end
 --]]
 
 function love.update(dt)
+    -- ball movement only if in play state
+	if gameState == 'play' then
+		ballX = ballX + ballDX * dt	
+		ballY = ballY + ballDY * dt
+	end
+
 	-- player 1 movement
 	if love.keyboard.isDown('w') then
 		-- add negative paddle speed to current Y scaled by deltaTime
@@ -89,6 +107,15 @@ function love.update(dt)
 		player2Y = player2Y + PADDLE_SPEED * dt
 		player2Y = math.min(VIRTUAL_HEIGHT - 20, player2Y)
 	end
+
+	-- ball collisions
+	if ballY < 0 then
+		ballY = 0
+		ballDY = -ballDY
+	elseif ballY > VIRTUAL_HEIGHT then
+		ballY = VIRTUAL_HEIGHT
+		ballDY = -ballDY
+	end
 end
 
 --[[
@@ -98,6 +125,20 @@ end
 function love.keypressed(key)
 	if key == 'escape' then
 		love.event.quit()
+	-- reset the game or start the game
+	elseif key == 'enter' or key == 'return' then
+		if gameState == 'start' then
+			gameState = 'play'
+		else
+			gameState = 'start'
+
+			-- restart with ball back in middle and new movement
+			ballX = VIRTUAL_WIDTH / 2 - 2
+			ballY = VIRTUAL_HEIGHT / 2 - 2
+
+			ballDX = math.random(2) == 1 and 100 or -100
+			ballDY = math.random(-50, 50)
+		end
 	end
 end
 
@@ -127,7 +168,7 @@ function love.draw()
 	love.graphics.rectangle('fill', VIRTUAL_WIDTH - 10, player2Y, 5, 20)
 
 	-- render ball
-	love.graphics.rectangle('fill', VIRTUAL_WIDTH / 2 - 2, VIRTUAL_HEIGHT / 2 - 2, 4, 4)
+	love.graphics.rectangle('fill', ballX, ballY, 4, 4)
 
 	-- end rendering at virtual resolution
 	push:apply('end')
