@@ -55,6 +55,9 @@ function love.load()
 	-- startup our RNG seeded with the time
 	math.randomseed(os.time())
 
+	-- set title
+	love.window.setTitle('PONG')
+
 	-- more retro font object
 	smallFont = love.graphics.newFont('font.ttf', 8)
 
@@ -160,7 +163,18 @@ function love.draw()
 
 	ball:render()
 
+	displayFPS()
+
 	-- end rendering at virtual resolution
 	push:apply('end')
 end
 
+--[[
+	Render the current FPS
+--]]
+function displayFPS()
+	-- simple FPS display across all states
+	love.graphics.setFont(smallFont)
+	love.graphics.setColor(0, 255, 0, 255)
+	love.graphics.print('FPS: ' .. tostring(love.timer.getFPS()), 10, 10)
+end
