@@ -60,7 +60,7 @@ function love.load()
 
 	-- more retro font object
 	smallFont = love.graphics.newFont('font.ttf', 8)
-
+	largeFont = love.graphics.newFont('font.ttf', 16)
 	scoreFont = love.graphics.newFont('font.ttf', 32)
 
 	love.graphics.setFont(smallFont)
@@ -127,22 +127,32 @@ function love.update(dt)
 				ball.dy = math.random(10, 150)
 			end
 		end
-	end
+		-- if we reach left or right edge of screen
+		-- we increment score and reset ball
+		if ball.x < 0 then
+			servingPlayer = 1
+			player2Score = player2Score + 1
 
-	-- if we reach left or right edge of screen
-	-- we increment score and reset ball
-	if ball.x < 0 then
-		servingPlayer = 1
-		player2Score = player2Score + 1
-		ball:reset()
-		gameState = 'serve'
-	end
+			if player2Score == 5 then
+				winningPlayer = 2
+				gameState = 'done'
+			else
+				gameState = 'serve'
+				ball:reset()
+			end
+		end
 
-	if ball.x > VIRTUAL_WIDTH then
-		servingPlayer = 2
-		player1Score = player1Score + 1
-		ball:reset()
-		gameState = 'serve'
+		if ball.x > VIRTUAL_WIDTH then
+			servingPlayer = 2
+			player1Score = player1Score + 1
+			if player1Score == 5 then
+				winningPlayer = 1
+				gameState = 'done'
+			else
+				gameState = 'serve'
+				ball:reset()
+			end
+		end
 	end
 
 	-- player 1 movement
@@ -181,8 +191,21 @@ function love.keypressed(key)
 	elseif key == 'enter' or key == 'return' then
 		if gameState == 'start' then
 			gameState = 'serve'
-		else
+		elseif gameState == 'serve' then
 			gameState = 'play'
+		elseif gameState == 'done' then
+			gameState = 'serve'
+
+			ball:reset()
+
+			player1Score = 0
+			player2Score = 0
+
+			if winningPlayer == 1 then
+				servingPlayer = 2
+			else
+				servingPlayer = 1
+			end
 		end
 	end
 end
@@ -209,7 +232,12 @@ function love.draw()
         love.graphics.printf('Press Enter to serve!', 0, 20, VIRTUAL_WIDTH, 'center')
     elseif gameState == 'play' then
         -- no UI messages to display in play
-    end
+    elseif gameState == 'done' then
+		love.graphics.setFont(largeFont)
+		love.graphics.printf('Player ' .. tostring(winningPlayer) .. ' wins!', 0, 10, VIRTUAL_WIDTH, 'center')
+		love.graphics.setFont(smallFont)
+		love.graphics.printf('Press Enter to restart!', 0, 30, VIRTUAL_WIDTH, 'center')
+	end
 
 	displayScore()
 
