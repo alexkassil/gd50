@@ -112,7 +112,22 @@ function love.update(dt)
 
 	-- ball movement only if in play state
 	if gameState == 'play' then
-	   ball:update(dt)
+		if ball:collides(player1) then
+			ball.dx = -ball.dx * 1.03
+			-- remove ball from collision box
+			ball.x = player1.x + 5
+
+			ball.dy = (ball.dy / math.abs(ball.dy)) * math.random(10, 150)
+		end
+
+		if ball:collides(player2) then
+			ball.dx = -ball.dx * 1.03
+			-- remove ball from collision box
+			ball.x = player2.x - 4
+
+			ball.dy = ball.dy / math.abs(ball.dy) * math.random(10, 150)
+		end
+		ball:update(dt)
 	end
 end
 
