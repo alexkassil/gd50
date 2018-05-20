@@ -16,6 +16,18 @@ push = require 'push'
 
 
 --[[
+	class library
+	https://github.com/vrld/hump/blob/master/class.lua
+--]]
+Class = require 'class'
+
+-- our Paddle class
+require 'Paddle'
+
+-- our Ball class
+require 'Ball'
+
+--[[
 	Global Variables to set window resolution
 	16:9 Aspect Ratio
 ]]
@@ -59,15 +71,12 @@ function love.load()
 	player1Score = 0
 	player2Score = 0
 
-	player1Y = 30
-	player2Y = VIRTUAL_HEIGHT - 50
+	-- create 2 paddles for each player
+	player1 = Paddle(10, 30, 5, 20)
+	player2 = Paddle(VIRTUAL_WIDTH - 10, VIRTUAL_HEIGHT - 30, 5, 20)
 
-	ballX = VIRTUAL_WIDTH / 2 - 2
-	ballY = VIRTUAL_HEIGHT / 2 - 2
-
-	-- cool way to set either 100 or -100
-	ballDX = math.random(2) == 1 and 100 or -100
-	ballDY = math.random(-50, 50)
+	-- place ball in middle of screen
+	ball = Ball(VIRTUAL_WIDTH / 2 - 2, VIRTUAL_HEIGHT / 2 - 2, 4, 4)
 
 	gameState = 'start'
 end
@@ -80,41 +89,27 @@ end
 --]]
 
 function love.update(dt)
-    -- ball movement only if in play state
-	if gameState == 'play' then
-		ballX = ballX + ballDX * dt	
-		ballY = ballY + ballDY * dt
-	end
-
 	-- player 1 movement
 	if love.keyboard.isDown('w') then
-		-- add negative paddle speed to current Y scaled by deltaTime
-		player1Y = player1Y - PADDLE_SPEED * dt
-		player1Y = math.max(0, player1Y)
+		player1.dy = -PADDLE_SPEED
+		player1:update(dt)
 	elseif love.keyboard.isDown('s') then
-		-- add positive paddle speed to current Y scaled by deltaTime
-		player1Y = player1Y + PADDLE_SPEED * dt
-		player1Y = math.min(VIRTUAL_HEIGHT - 20, player1Y)
+		player1.dy = PADDLE_SPEED
+		player1:update(dt)
 	end
 
 	-- player 2 movement
 	if love.keyboard.isDown('up') then
-		-- add negative paddle speed to current Y scaled by deltaTime
-		player2Y = player2Y - PADDLE_SPEED * dt
-		player2Y = math.max(0, player2Y)
+		player2.dy = -PADDLE_SPEED
+		player2:update(dt)
 	elseif love.keyboard.isDown('down') then
-		-- add positive paddle speed to current Y scaled by deltaTime
-		player2Y = player2Y + PADDLE_SPEED * dt
-		player2Y = math.min(VIRTUAL_HEIGHT - 20, player2Y)
+		player2.dy = PADDLE_SPEED
+		player2:update(dt)
 	end
 
-	-- ball collisions
-	if ballY < 0 then
-		ballY = 0
-		ballDY = -ballDY
-	elseif ballY > VIRTUAL_HEIGHT then
-		ballY = VIRTUAL_HEIGHT
-		ballDY = -ballDY
+	-- ball movement only if in play state
+	if gameState == 'play' then
+	   ball:update(dt)
 	end
 end
 
@@ -132,12 +127,7 @@ function love.keypressed(key)
 		else
 			gameState = 'start'
 
-			-- restart with ball back in middle and new movement
-			ballX = VIRTUAL_WIDTH / 2 - 2
-			ballY = VIRTUAL_HEIGHT / 2 - 2
-
-			ballDX = math.random(2) == 1 and 100 or -100
-			ballDY = math.random(-75, 75)
+			ball:reset()
 		end
 	end
 end
@@ -149,23 +139,26 @@ end
 function love.draw()
 	push:apply('start')
 
+	love.graphics.clear(40, 45, 52, 255)
+
 	-- welcome text
 	love.graphics.setFont(smallFont)
-    love.graphics.printf('Hello Pong!', 0, 20, VIRTUAL_WIDTH, 'center')
+
+	if gameState == 'start' then
+		love.graphics.printf('Hello Start State!', 0, 20, VIRTUAL_WIDTH, 'center')
+	else
+		love.graphics.printf('Hello Play State!', 0, 20, VIRTUAL_WIDTH, 'center')
+	end
 
 	-- score
 	love.graphics.setFont(scoreFont)
 	love.graphics.print(tostring(player1Score), VIRTUAL_WIDTH / 2 - 50, VIRTUAL_HEIGHT / 3)
 	love.graphics.print(tostring(player2Score), VIRTUAL_WIDTH / 2 + 30, VIRTUAL_HEIGHT / 3)
 
-	-- render left paddle
-	love.graphics.rectangle('fill', 10, player1Y, 5, 20)
+	player1:render()
+	player2:render()
 
-	-- render right paddle
-	love.graphics.rectangle('fill', VIRTUAL_WIDTH - 10, player2Y, 5, 20)
-
-	-- render ball
-	love.graphics.rectangle('fill', ballX, ballY, 4, 4)
+	ball:render()
 
 	-- end rendering at virtual resolution
 	push:apply('end')
