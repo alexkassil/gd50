@@ -73,7 +73,7 @@ function love.load()
 
     push:setupScreen(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, {
         fullscreen = false,
-        resizable = false,
+        resizable = true,
         vsync = true
     })
 
@@ -260,6 +260,13 @@ function love.draw()
 
 	-- end rendering at virtual resolution
 	push:apply('end')
+end
+
+--[[
+	Keep aspect ratio when resizing
+--]]
+function love.resize(w, h)
+	push:resize(w, h)
 end
 
 --[[
