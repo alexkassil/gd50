@@ -36,9 +36,11 @@ function Ball:update(dt)
 
 	-- ball collisions
 	if self.y < 0 then
+		sounds['wall_hit']:play()
 		self.y = 0
 		self.dy = -self.dy
 	elseif self.y > VIRTUAL_HEIGHT - 4 then
+		sounds['wall_hit']:play()
 		self.y = VIRTUAL_HEIGHT - 4
 		self.dy = -self.dy
 	end
