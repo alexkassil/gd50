@@ -266,7 +266,7 @@ end
 	Keep aspect ratio when resizing
 --]]
 function love.resize(w, h)
-	push.resize(w, h)
+	push:resize(w, h)
 end
 
 --[[
