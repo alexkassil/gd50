@@ -12,6 +12,10 @@ function Bird:init()
    self.dy = 0
 end
 
+function Bird:jump()
+   self.dy = self.dy - 5
+end
+
 function Bird:render()
    love.graphics.draw(self.image, self.x, self.y)
 end
@@ -20,4 +24,8 @@ function Bird:update(dt)
    self.dy = self.dy + GRAVITY * dt
 
    self.y = self.y + self.dy
+
+   if love.keyboard.wasPressed(' ') then
+	   self:jump()
+   end
 end
